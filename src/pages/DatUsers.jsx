@@ -75,14 +75,13 @@ export default function DatUsers() {
   const scrollRight = () => scrollContainerRef.current?.scrollBy({ left: 250, behavior: 'smooth' });
 
   // Creation/Edit Handlers
-  const handleCreateMail = (e) => {
+  const handleCreateMail = async (e) => {
     e.preventDefault();
     if (!newMail.mail_name || !newMail.screen_name) return;
-    const mailObj = { id: Date.now().toString(), ...newMail, users: [] };
-    addDatMail(activeType, mailObj);
+    const created = await addDatMail(activeType, newMail.mail_name, newMail.screen_name);
     setNewMail({ mail_name: '', screen_name: '' });
     setIsMailModalOpen(false);
-    setActiveMailId(mailObj.id);
+    if (created) setActiveMailId(created.id);
   };
 
   const handleRemoveMail = () => {
@@ -92,26 +91,27 @@ export default function DatUsers() {
     }
   };
 
-  const handleCreateUser = (e) => {
+  const handleCreateUser = async (e) => {
     e.preventDefault();
     if (!newUser.client_name || !activeMailId) return;
-    addDatUser(activeType, activeMailId, {
-      id: Date.now().toString(),
+    await addDatUser(activeType, activeMailId, {
       ...newUser,
       price: Number(newUser.price) || 0,
       start_date: new Date(newUser.start_date).toISOString(),
       end_date: new Date(newUser.end_date).toISOString(),
     });
     setIsUserModalOpen(false);
-    setNewUser({ ...newUser, client_name: '', username: '', price: 0 }); // reset core bits
+    setNewUser({ ...newUser, client_name: '', username: '', price: 0 });
   };
 
-  const handleEditSubmit = (e) => {
+  const handleEditSubmit = async (e) => {
     e.preventDefault();
     if (!editingUser) return;
-    editDatUser(editingUser.id, {
-      ...editingUser,
+    await editDatUser(editingUser.id, {
+      client_name: editingUser.client_name,
+      username: editingUser.username,
       price: Number(editingUser.price) || 0,
+      status: editingUser.status,
       start_date: new Date(editingUser.start_date).toISOString(),
       end_date: new Date(editingUser.end_date).toISOString()
     });

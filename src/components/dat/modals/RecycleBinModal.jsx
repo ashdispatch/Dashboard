@@ -12,23 +12,23 @@ export function RecycleBinModal({ isOpen, onClose }) {
   const { bin, restoreDatUser, permanentlyDeleteFromBin, emptyBin } = useStore();
   const [historyUser, setHistoryUser] = useState(null);
 
-  const handleEmptyBin = () => {
-    if (window.confirm("WARNING: Are you sure you want to permanently delete ALL users in the bin? This cannot be undone.")) {
-      emptyBin();
+  const handleEmptyBin = async () => {
+    if (window.confirm("WARNING: Permanently delete ALL users in the bin? This cannot be undone.")) {
+      await emptyBin();
     }
   };
 
-  const handlePermanentDelete = (e, id) => {
+  const handlePermanentDelete = async (e, user) => {
     e.stopPropagation();
     if (window.confirm("Permanently delete this user?")) {
-      permanentlyDeleteFromBin(id);
+      await permanentlyDeleteFromBin(user.id);
     }
   };
 
-  const handleRestore = (e, id) => {
+  const handleRestore = async (e, user) => {
     e.stopPropagation();
     if (window.confirm("Restore this user back to their active Mail group?")) {
-      restoreDatUser(id);
+      await restoreDatUser(user);
     }
   };
 
@@ -85,14 +85,14 @@ export function RecycleBinModal({ isOpen, onClose }) {
                         </td>
                         <td className="p-4 text-right flex justify-end gap-2 items-center h-full pt-5">
                           <button 
-                            onClick={(e) => handleRestore(e, user.id)}
+                            onClick={(e) => handleRestore(e, user)}
                             className="bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] hover:bg-[var(--accent-primary)] hover:text-[#0a0a0a] transition-all p-2 rounded-md"
                             title="Restore User"
                           >
                             <RefreshCw size={16} />
                           </button>
                           <button 
-                            onClick={(e) => handlePermanentDelete(e, user.id)}
+                            onClick={(e) => handlePermanentDelete(e, user)}
                             className="bg-[var(--semantic-negative)]/10 text-[var(--semantic-negative)] hover:bg-[var(--semantic-negative)] hover:text-white transition-all p-2 rounded-md"
                             title="Permanently Delete"
                           >

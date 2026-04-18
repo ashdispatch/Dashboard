@@ -1,1 +1,0 @@
-import{h as e,m as t,y as n}from"./proxy-Bs8qqFrP.js";n();var r=t();function i({className:t,children:n,...i}){return(0,r.jsx)(`div`,{className:e(`bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl shadow-md`,t),...i,children:n})}function a({className:t,children:n,...i}){return(0,r.jsx)(`div`,{className:e(`p-6`,t),...i,children:n})}export{a as n,i as t};
