@@ -78,30 +78,45 @@ export default function DatUsers() {
   const handleCreateMail = async (e) => {
     e.preventDefault();
     if (!newMail.mail_name || !newMail.screen_name) return;
-    const created = await addDatMail(activeType, newMail.mail_name, newMail.screen_name);
-    setNewMail({ mail_name: '', screen_name: '' });
-    setIsMailModalOpen(false);
-    if (created) setActiveMailId(created.id);
+    try {
+      const created = await addDatMail(activeType, newMail.mail_name, newMail.screen_name);
+      setNewMail({ mail_name: '', screen_name: '' });
+      setIsMailModalOpen(false);
+      if (created) setActiveMailId(created.id);
+    } catch (err) {
+      console.error('Create mail error:', err);
+      alert('Failed to create mail: ' + (err.message || 'Unknown error. Check console.'));
+    }
   };
 
-  const handleRemoveMail = () => {
+  const handleRemoveMail = async () => {
     if (!activeMailId) return;
-    if (window.confirm(`Are you sure you want to delete ${activeMailData.screen_name}? This will cascade all nesting users to the Bin.`)) {
-      deleteDatMail(activeType, activeMailId);
+    if (window.confirm(`Are you sure you want to delete ${activeMailData.screen_name}?`)) {
+      try {
+        await deleteDatMail(activeType, activeMailId);
+      } catch (err) {
+        console.error('Delete mail error:', err);
+        alert('Failed to delete mail: ' + (err.message || 'Unknown error.'));
+      }
     }
   };
 
   const handleCreateUser = async (e) => {
     e.preventDefault();
     if (!newUser.client_name || !activeMailId) return;
-    await addDatUser(activeType, activeMailId, {
-      ...newUser,
-      price: Number(newUser.price) || 0,
-      start_date: new Date(newUser.start_date).toISOString(),
-      end_date: new Date(newUser.end_date).toISOString(),
-    });
-    setIsUserModalOpen(false);
-    setNewUser({ ...newUser, client_name: '', username: '', price: 0 });
+    try {
+      await addDatUser(activeType, activeMailId, {
+        ...newUser,
+        price: Number(newUser.price) || 0,
+        start_date: new Date(newUser.start_date).toISOString(),
+        end_date: new Date(newUser.end_date).toISOString(),
+      });
+      setIsUserModalOpen(false);
+      setNewUser({ ...newUser, client_name: '', username: '', price: 0 });
+    } catch (err) {
+      console.error('Create user error:', err);
+      alert('Failed to create user: ' + (err.message || 'Unknown error.'));
+    }
   };
 
   const handleEditSubmit = async (e) => {
